@@ -3,9 +3,6 @@
 This repository contains user scripts for single site browsers
 made with [Fluid](http://fluidapp.com).
 
-Note: Facebook and Google change their class IDs frequently, so if notifications
-aren't working, submit an issue and I'll update the scripts.
-
 ## Installation
 
 First of all, you need a premium version of [Fluid](http://fluidapp.com). If you
@@ -30,3 +27,8 @@ don't have that, custom user scripts won't work.
   by [Enrique Alonso Ramírez Tejeda](http://dtafalonso.deviantart.com/).
 * [Matthew Dias](http://www.matthewdias.me/) did the ground work in his
   [fluidapps](https://github.com/matthewdias/fluidapps) repository.
+
+## Notes
+
+Facebook and Google change their class IDs frequently, so if notifications
+aren't working, submit an issue and I'll update the scripts.
