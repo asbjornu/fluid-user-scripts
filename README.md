@@ -28,5 +28,5 @@ don't have that, custom user scripts won't work.
 * Messenger icon adapted from [messenger.com](http://messenger.com/).
 * [Gmail icon](http://www.iconarchive.com/show/cold-fusion-hd-icons-by-chrisbanks2/gmail-new-2-icon.html)
   by [Enrique Alonso Ramírez Tejeda](http://dtafalonso.deviantart.com/).
-* [Matthew Dias](https://github.com/matthewdias/) did the ground work in his
+* [Matthew Dias](http://www.matthewdias.me/) did the ground work in his
   [fluidapps](https://github.com/matthewdias/fluidapps) repository.
