@@ -1,11 +1,14 @@
+// Must be configured to work on the following domain patterns:
+// *messenger.com*
+
 window.fluid.dockBadge = '';
 var count;
 setInterval(updateDockBadge, 500);
 
 function updateDockBadge() {
-    
+
     var els = document.getElementsByClassName('_1ht3');
-    
+
     if (els.length > count) {
         window.console.log('notifying');
         for(i = 0; i < els.length - count; i++) {
@@ -19,9 +22,9 @@ function updateDockBadge() {
             window.webkitNotifications.createNotification('', title, text).show();
         }
     }
-    
+
     count = els.length;
-    
+
     if(count > 0) {
         window.fluid.dockBadge = count;
     }
