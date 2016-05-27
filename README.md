@@ -1,21 +1,29 @@
-# Fluid Apps
-Single site browsers for Inbox and Messenger with support for dock badges and notifications.
+# Fluid User Scripts
 
-Note: Facebook and Google change their class IDs frequently, so if notifications aren't working, submit an issue and I'll update the scripts.
+This repository contains user scripts for single site browsers
+made with [Fluid](http://fluidapp.com).
 
-Inbox icon by Fabrizio Rinaldi - https://dribbble.com/linuz90
+Note: Facebook and Google change their class IDs frequently, so if notifications
+aren't working, submit an issue and I'll update the scripts.
 
-Messenger icon adapted from [messenger.com](http://messenger.com/)
+## Installation
 
-Installation:
+First of all, you need a premium version of [Fluid](http://fluidapp.com). If you
+don't have that, custom user scripts won't work.
 
-You will need a premium version of Fluid - http://fluidapp.com
+1. Create a new Fluid app for the service you want.
+2. Add an icon for the app in *Preferences* > *General* > *Application icon*;
+   you're free to use the icons made available in this repository.
+3. Go to *<App Name>* > *User Agent* > *Chrome/Safari*
+4. Go to *Window* > *Userscripts*
+5. Add a new script with the pattern(s) listed in the user script you want to
+   add.
+6. Copy in code from the user script.
+7. Quit and reopen the app.
 
-1. Create a new fluid app with inbox.google.com or messenger.com
-2. Add icons
-3. Go to <App Name> -> User Agent -> Chrome/Safari
-4. Go to Window -> Userscripts
-5. Add a new script with pattern \*inbox.google.com\* or \*messenger.com\*
-6. Copy in code from inbox.js or messenger.js
-7. Quit and Reopen app
-8. Profit! (https://cash.me/$matthewdias)
+## Credits
+
+* Inbox icon by [Fabrizio Rinaldi](https://dribbble.com/linuz90)
+* Messenger icon adapted from [messenger.com](http://messenger.com/)
+* Matthew Dias (@matthewdias) did the ground work in his
+  [fluidapps](https://github.com/matthewdias/fluidapps) repository.
