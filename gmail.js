@@ -1,25 +1,24 @@
-// From: https://gist.github.com/kirbysayshi/5356592
+// Copied from: http://solovyov.net/en/2016/fluid-gmail/
+//
+// Must be configured to work on the following domain patterns:
+// *google.com*mail*
+// *gmail.com*
+// *mail.google.com*
 
-window.fluid.dockBadge = '';
-setTimeout(updateDockBadge, 1000);
-setTimeout(updateDockBadge, 3000);
-setInterval(updateDockBadge, 5000);
+function getUnread() {
+    var inbox = document.querySelector('a[title^="Innboks"]');
+    var m = inbox.title.match(/Innboks \((\d+)\)/);
+
+    return m ? parseInt(m[1], 10) : 0;
+}
+
+function setBadge(count) {
+    window.fluid.dockBadge = count ? '' + count : '';
+}
 
 function updateDockBadge() {
-    var navigation = document.querySelector('[role=navigation]')
-    var doc = navigation.contentDocument || navigation.ownerDocument;
-
-    if (!doc) { return; }
-
-    var anchors = [].slice.call(doc.querySelectorAll('a'))
-
-    var result = anchors.reduce(function(prev, curr, i) {
-        var match = curr.innerText.match(/\s*Innboks\s*\((\d+)\)[^\d]*/)
-        if (match) return match;
-        else return prev;
-    }, null);
-
-    if (result && result[1]) {
-        window.fluid.dockBadge = result[1];
-    }
+    setBadge(getUnread());
+    setTimeout(updateDockBadge, 1000);
 }
+
+setTimeout(updateDockBadge, 1000);
