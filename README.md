@@ -7,8 +7,6 @@ Inbox icon by Fabrizio Rinaldi - https://dribbble.com/linuz90
 
 Messenger icon adapted from [messenger.com](http://messenger.com/)
 
-![](https://dl.dropbox.com/s/h3bba2zh571xoxk/Screenshot%202015-04-04%2003.29.33.png)
-
 Installation:
 
 You will need a premium version of Fluid - http://fluidapp.com
