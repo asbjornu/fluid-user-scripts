@@ -1,23 +1,45 @@
-// Copied from: http://solovyov.net/en/2016/fluid-gmail/
-//
-// Must be configured to work on the following domain patterns:
-// *google.com*mail*
-// *gmail.com*
-// *mail.google.com*
+// Inspired by: http://solovyov.net/en/2016/fluid-gmail/
 
-function getUnread() {
-    var inbox = document.querySelector('a[title^="Innboks"]');
-    var m = inbox.title.match(/Innboks \((\d+)\)/);
+function getInboxLink() {
+    var inboxLinks = document.querySelectorAll('a[href$="#inbox"]');
 
-    return m ? parseInt(m[1], 10) : 0;
+    if (!inboxLinks || inboxLinks.length == 0) {
+        console.log('Could not find any inbox links.');
+        return null;
+    }
+
+    for (var i = 0; i < inboxLinks.length; i++) {
+        var link = inboxLinks[i];
+        if (link.getAttribute('href') != '#inbox' && link.title == link.innerText) {
+            return link;
+        }
+    }
+
+    return null;
 }
 
-function setBadge(count) {
-    window.fluid.dockBadge = count ? '' + count : '';
+
+function getUnreadCount() {
+    var inboxLink = getInboxLink();
+
+    if (!inboxLink) {
+        console.log('Could not find the inbox link.');
+        return 0;
+    }
+
+    var m = inboxLink.title.match(/[^\(]*\((\d+)\)/);
+
+    if (!m) {
+        console.log('Could not find the count in the inbox element.');
+        return 0;
+    }
+
+    return parseInt(m[1], 10);
 }
 
 function updateDockBadge() {
-    setBadge(getUnread());
+    var count = getUnreadCount();
+    window.fluid.dockBadge = count && count > 0 ? '' + count : '';
     setTimeout(updateDockBadge, 1000);
 }
 
