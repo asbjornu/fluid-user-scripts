@@ -1,12 +1,3 @@
-function resetDockBadge() {
-    if (arguments.length > 0) {
-        console.log(arguments);
-    }
-
-    window.fluid.dockBadge = '\u25fc';
-    return false;
-}
-
 function update(state) {
     state.playing = updatePlayingStatus();
     state.playingNow = state.playing
@@ -73,36 +64,35 @@ function notifyPlayingNow(playingPrevious) {
         try {
             var nowPlayingAvatarElement = document.querySelector('.playbackSoundBadge__avatar');
             if (!nowPlayingAvatarElement) {
-                throw 'NowPlayingAvatarElementNotFoundException';
+                throw new NotificationException('Now playing avatar element not found');
             }
 
-            var artistUrl = nowPlayingAvatarElement.getAttribute('href');
+            var songUrl = nowPlayingAvatarElement.getAttribute('href');
 
-            if (!artistUrl) {
-                throw 'ArtistUrlNotFoundException';
+            if (!songUrl) {
+                throw new NotificationException('Song URL not found');
             }
+
+            var q = songUrl.indexOf('?');
+            songUrl = q > -1 ? songUrl.substring(0, q) : songUrl;
 
             var xhr = new XMLHttpRequest();
             xhr.addEventListener('load', function(e) {
-                /*var doc = new DocumentFragment();
-                doc.innerHTML = this.responseText;*/
+                try {
+                    var json = JSON.parse(this.responseText);
 
-                var doc = document.createElement('div');
-                doc.innerHTML = this.responseText;
+                    if (!json || !json['author_name']) {
+                        throw new NotificationException('Invalid JSON', { json : json, text : this.responseText });
+                    }
 
-                var artistElement = doc.querySelector('meta[property="og:title"]');
-                if (!artistElement) {
-                    console.error('Found no artist element.', doc);
-                    sendDefaultNotification();
-                    return;
+                    artist = json['author_name'];
+                } catch (e) {
+                    console.error(e);
                 }
-
-                console.log('Found artist', artistElement);
-                artist = artistElement.getAttribute('content');
 
                 notify(artist, song);
             });
-            xhr.open('GET', artistUrl);
+            xhr.open('GET', 'https://soundcloud.com/oembed?format=json&url=https%3A%2F%2Fsoundcloud.com' + encodeURI(songUrl));
             xhr.send();
         } catch (e) {
             console.error(e);
@@ -114,32 +104,52 @@ function notifyPlayingNow(playingPrevious) {
 }
 
 function updatePlayingStatus() {
-    var playControlsContainer = document.querySelector('.playControls.m-visible');
+    try {
+        var playControlsContainer = document.querySelector('.playControls.m-visible');
+        if (!playControlsContainer) {
+            throw new PlayControlException('Found no visible play controls.');
+        }
 
-    if (!playControlsContainer) {
-        return resetDockBadge('Found no visible play controls.');
-    }
+        var playControls = document.getElementsByClassName('playControl');
 
-    var playControls = document.getElementsByClassName('playControl');
+        if (!playControls || playControls.length == 0) {
+            throw 'Found no play control.';
+        }
 
-    if (!playControls || playControls.length == 0) {
-        return resetDockBadge('Found no play control.');
-    }
+        var playControl = playControls[0];
+        var playing = playControl.title.match(/pause/i);
+        var paused = playControl.title.match(/play/i);
 
-    var playControl = playControls[0];
-    var playing = playControl.title.match(/pause/i);
-    var paused = playControl.title.match(/play/i);
-
-    if (playing) {
-        window.fluid.dockBadge = '\u25b6';
-        return true;
-    } else if (paused) {
-        window.fluid.dockBadge = 'II';
-    } else {
-        return resetDockBadge('The play control had an unexpected title.', playControl);
+        if (playing) {
+            window.fluid.dockBadge = '\u25b6';
+            return true;
+        } else if (paused) {
+            window.fluid.dockBadge = 'II';
+        } else {
+            throw new PlayControlException('The play control had an unexpected title.', playControls);
+        }
+    } catch (e) {
+        console.error(e);
+        window.fluid.dockBadge = '\u25fc';
     }
 
     return false;
+}
+
+function NotificationException(message, data) {
+    this.message = message;
+    this.data = data;
+    this.toString = function() {
+        return this.message;
+    };
+}
+
+function PlayControlException(message, playControls) {
+    this.message = message;
+    this.playControls = playControls;
+    this.toString = function() {
+        return this.message;
+    };
 }
 
 setTimeout(update, 1000, {});
