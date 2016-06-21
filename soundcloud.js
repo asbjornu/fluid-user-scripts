@@ -57,11 +57,57 @@ function notifyPlayingNow(playingPrevious) {
     var playingNow = playbackSoundBadge.innerText;
 
     if (playingNow !== playingPrevious) {
-        console.log('New song detected. Notifying!', playingPrevious, playingNow)
-        var dashIndex = playingNow.indexOf('-');
-        var artist = dashIndex > -1 ? playingNow.substring(0, dashIndex - 1) : 'SoundCloud Now Playing'
-        var song = dashIndex > -1 ? playingNow.substring(dashIndex + 1) : playingNow;
-        notify(artist, song);
+        console.log('New song detected. Notifying!', playingPrevious, playingNow);
+        var artist = 'SoundCloud Now Playing';
+        var song = playingNow;
+
+        var sendDefaultNotification = function() {
+            var artistElement = document.querySelector('.soundTitle__usernameText');
+            var songElement = document.querySelector('.compactTrackListItem__trackTitle');
+            artist = artistElement ? artistElement.innerText : artist;
+            song = songElement ? songElement.innerText : song;
+
+            notify(artist, song);
+        };
+
+        try {
+            var nowPlayingAvatarElement = document.querySelector('.playbackSoundBadge__avatar');
+            if (!nowPlayingAvatarElement) {
+                throw 'NowPlayingAvatarElementNotFoundException';
+            }
+
+            var artistUrl = nowPlayingAvatarElement.getAttribute('href');
+
+            if (!artistUrl) {
+                throw 'ArtistUrlNotFoundException';
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener('load', function(e) {
+                /*var doc = new DocumentFragment();
+                doc.innerHTML = this.responseText;*/
+
+                var doc = document.createElement('div');
+                doc.innerHTML = this.responseText;
+
+                var artistElement = doc.querySelector('meta[property="og:title"]');
+                if (!artistElement) {
+                    console.error('Found no artist element.', doc);
+                    sendDefaultNotification();
+                    return;
+                }
+
+                console.log('Found artist', artistElement);
+                artist = artistElement.getAttribute('content');
+
+                notify(artist, song);
+            });
+            xhr.open('GET', artistUrl);
+            xhr.send();
+        } catch (e) {
+            console.error(e);
+            sendDefaultNotification();
+        }
     }
 
     return playingNow;
