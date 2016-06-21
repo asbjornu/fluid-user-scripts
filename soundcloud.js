@@ -1,10 +1,24 @@
+function reset() {
+    if (arguments.length > 0) {
+        console.log(arguments);
+    }
+
+    window.fluid.dockBadge = '\u25fc';
+    setTimeout(updateDockBadge, 500);
+    return null;
+}
+
 function updateDockBadge() {
+    var playControlsContainer = document.querySelector('.playControls.m-visible');
+
+    if (!playControlsContainer) {
+        return reset('Found no visible play controls');
+    }
+
     var playControls = document.getElementsByClassName('playControl');
 
     if (!playControls || playControls.length == 0) {
-        console.log('Found no play control');
-        window.fluid.dockBadge = '';
-        return;
+        return reset('Found no play control');
     }
 
     var playControl = playControls[0];
@@ -12,12 +26,11 @@ function updateDockBadge() {
     var paused = playControl.title.match(/play/i);
 
     if (playing) {
-        window.fluid.dockBadge = '\u27a4';
+        window.fluid.dockBadge = '\u25b6';
     } else if (paused) {
-        window.fluid.dockBadge = '\u2016';
+        window.fluid.dockBadge = 'II';
     } else {
-        console.log('The play control had an unexpected title.', playControl);
-        window.fluid.dockBadge = '';
+        return reset('The play control had an unexpected title.', playControl);
     }
 
     setTimeout(updateDockBadge, 500);
