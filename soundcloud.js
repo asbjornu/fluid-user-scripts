@@ -1,5 +1,5 @@
 function update(state) {
-    state.playing = updatePlayingStatus();
+    state.playing = updatePlayingStatus(state);
     state.playingNow = state.playing
                      ? notifyPlayingNow(state.playingNow)
                      : state.playingNow;
@@ -103,7 +103,7 @@ function notifyPlayingNow(playingPrevious) {
     return playingNow;
 }
 
-function updatePlayingStatus() {
+function updatePlayingStatus(state) {
     try {
         var playControlsContainer = document.querySelector('.playControls.m-visible');
         if (!playControlsContainer) {
@@ -113,27 +113,31 @@ function updatePlayingStatus() {
         var playControls = document.getElementsByClassName('playControl');
 
         if (!playControls || playControls.length == 0) {
-            throw 'Found no play control.';
+            throw new PlayControlException('Found no play control.');
         }
 
         var playControl = playControls[0];
         var playing = playControl.title.match(/pause/i);
         var paused = playControl.title.match(/play/i);
 
-        if (playing) {
+        if (playing && !state.playing) {
+            console.log('Play state change detected: Playing.');
             window.fluid.dockBadge = '\u25b6';
-            return true;
-        } else if (paused) {
+            state.playing = true;
+        } else if (paused && state.playing) {
+            console.log('Play state change detected: Paused.');
             window.fluid.dockBadge = 'II';
-        } else {
+            state.playing = false;
+        } else if (!playing && !paused) {
             throw new PlayControlException('The play control had an unexpected title.', playControls);
         }
     } catch (e) {
-        console.error(e);
+        console.error('Play state change detected: Stopped.', e);
         window.fluid.dockBadge = '\u25fc';
+        state.playing = false;
     }
 
-    return false;
+    return state.playing;
 }
 
 function NotificationException(message, data) {
